@@ -1,2 +1,77 @@
 # NEMU-testcase
 zby's testcase of NEMU
+
+ZBY 的 NEMU 测试用例
+
+
+关于 NEMU：
+    NEMU 是复旦大学计算机系统基础课的大作业，目的是实现一个简单的教学用 x86 虚拟机。
+    复旦版是南大版的一个 fork，因为 NEMU 是南大的项目。
+    复旦版：https://github.com/fdu-ics/programming-assignment
+    南大版：https://github.com/nju-ics/ics2015
+
+测试用例：
+    testcase/src 目录下含有测试用例，其中有一部分是手写的，另一部分是用数据结构作业自动生成的。
+    其中一些运行时间会比较长，但不会超过三分钟。
+
+增强版的 trap.h：
+    经过我修改的 trap.h 支持真机测试（见后），同时增加了 REALMACHINE_NOTSUITABLE 宏表明
+    某一个测试样例不适合在真机上进行测试。
+
+内嵌汇编的参考资料：
+    有一些测试样例用到了内嵌汇编，用来测试指令级的行为。
+    参考资料：http://www.cnblogs.com/taek/archive/2012/02/05/2338838.html
+
+关于 .S (汇编代码) 类型的测试用例的用法：
+    在 testcase/Makefile.part 内添加如下内容：
+    testcase_BIN_SOBJS := $(filter-out obj/testcase/start, $(testcase_SOBJS:.o=))
+    testcase_LDFLAGS_SOBJS := -m elf_i386 -e start -Ttext=0x00800000 
+    $(testcase_BIN_SOBJS): % : %.o
+    	$(call make_command, $(LD), $(testcase_LDFLAGS_SOBJS), ld $@, $^)
+    	@objdump -d $@ > $@.txt
+    然后便可以像使用 mov.S 那样使用其他的测试用例了。如果想要在自动测试时也测试 .S 代码，
+    在 Makefile 中把所有 $(testcase_BIN) 后面追加上 $(testcase_BIN_SOBJS) 即可。
+
+一些测试用例的说明：
+    LLneg.c
+        需要 NEG 指令更新 CF 标志，否则会测试失败，详情请看代码内的注释。
+    LLdiv.c
+        用减法和移位实现的 long long 型除法，可以解决虚拟机中不能进行 long long 除法的问题。
+        源项目：https://github.com/zhangboyang/LLdiv
+    bad.c
+        单纯地就是一个 HIT_BAD_TRAP，测试它真的能不能 HIT BAD TRAP。
+    invalid_eflags.c
+        无论如何都会 HIT_BAD_TRAP，用来测试 NEMU 能否检测到应该设置却没有设置的标志。
+    memcmp.c
+        由于某种幸运的原因，SHR 指令不更新 ZF 也能通过测试，详情请看代码内的注释。
+    je16.S
+        16 位 je 跳转指令的测试，不能通过没有关系，因为根本没人会用 16 位条件转移指令。
+    jecxz.S
+        jecxz 相对于 jcxz 的前缀比较奇怪，是 address size 类型的前缀。
+        参考资料：http://www.mouseos.com/x64/doc3.html
+    poj*.c la*.c
+        用脚本自动生成的测试用例（见后）。来源是数据结构课作业。
+
+在真机上运行测试用例：
+    在真机上运行测试用例可以检测测试用例的正确性，用 realtest.sh 脚本可以实现这一点。
+    realtest.sh 的用法：
+        ./realtest.sh : 测试 testcase/src 下的所有测试用例
+        ./realtest.sh someprogram.c : 仅测试 testcase/src/someprogram.c
+
+关于真机运行的细节：
+    在真机运行测试用例时，如果直接运行会遇到访问违例的问题，可以通过 mmap 进行内存映射来解决。
+    具体的代码在 realtest.c 中。
+
+自动生成测试用例：
+    testcasegen.sh 脚本可以用来自动生成测试用例。
+    testcasegen.sh 的用法：
+        ./testcasegen.sh path_to_some_c_src.c input_data.txt testcasename.c
+        将以 input_data.txt 为输入数据，运行 path_to_some_c_src.c 中的程序并产生输出。
+        并且将可以直接在 NEMU 中运行的 C 源代码文件命名为 testcasename.c 并拷贝到相应位置。
+        输入数据和输出数据会内嵌在生成出来的 C 源代码文件中。
+    输入的代码应该是类似 OJ 的输入输出形式，即用 scanf 读入数据，用 printf 输出数据。
+    因为是自己手写的 printf 和 scanf，所以只支持简单的 %d %lld %s %c 格式符，
+    *不*支持这些格式符的高级用法如 %1d %10s 等。除 printf 外还支持 puts putchar 进行输出。
+    输入输出部分代码（即生成模板）在 testcase/naive-stdio-template.c 中。
+    源项目：https://github.com/zhangboyang/naive-stdio
+
