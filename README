@@ -25,12 +25,11 @@ ZBY 的 NEMU 测试用例
 关于 .S (汇编代码) 类型的测试用例的用法：
     在 testcase/Makefile.part 内添加如下内容：
     testcase_BIN_SOBJS := $(filter-out obj/testcase/start, $(testcase_SOBJS:.o=))
-    testcase_LDFLAGS_SOBJS := -m elf_i386 -e start -Ttext=0x00800000 
     $(testcase_BIN_SOBJS): % : %.o
-    	$(call make_command, $(LD), $(testcase_LDFLAGS_SOBJS), ld $@, $^)
+    	$(call make_command, $(LD), $(testcase_LDFLAGS), ld $@, $^)
     	@objdump -d $@ > $@.txt
     然后便可以像使用 mov.S 那样使用其他的测试用例了。如果想要在自动测试时也测试 .S 代码，
-    在 Makefile 中把所有 $(testcase_BIN) 后面追加上 $(testcase_BIN_SOBJS) 即可。
+    只要在 Makefile 中把所有 $(testcase_BIN) 后面追加上 $(testcase_BIN_SOBJS) 即可。
 
 一些测试用例的说明：
     LLneg.c
