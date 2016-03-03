@@ -32,6 +32,14 @@ ZBY 的 NEMU 测试用例
     	@objdump -d $@ > $@.txt
     然后便可以像使用 mov.S 那样使用其他的测试用例了。如果想要在自动测试时也测试 .S 代码，
     只要在 Makefile 中把所有 $(testcase_BIN) 后面追加上 $(testcase_BIN_SOBJS) 即可。
+    但是在 PA3 中，开启分页后，大部分 .S 测试用例会失败，可以把自动测试 .S 代码关掉
+    这是因为 .S 代码中用到了未映射的页面，不代表 NEMU 的实现有错误。
+
+强烈建议对测试用例开启 -O2 编译优化：
+    由于 kernel, game 都是开启 -O2 优化来编译的，开启优化后，编译器产生的代码会有很大的不同，
+    因此强烈建议不开优化测一遍、开启优化再测一遍。
+    具体的开启编译优化的步骤是：
+    在 testcase/Makefile.part 的第一行，向 testcase_CFLAGS_EXTRA 中添加 -O2 选项。
 
 一些测试用例的说明：
     LLneg.c
@@ -43,6 +51,8 @@ ZBY 的 NEMU 测试用例
         单纯地就是一个 HIT_BAD_TRAP，测试它真的能不能 HIT BAD TRAP。
     invalid_eflags.c
         无论如何都会 HIT_BAD_TRAP，用来测试 NEMU 能否检测到应该设置却没有设置的标志。
+    movzx.c movsx.c
+        测试 MOVZX, MOVSX 中单字节寄存器的译码是否正确。
     memcmp.c
         由于某种幸运的原因，SHR 指令不更新 ZF 也能通过测试，详情请看代码内的注释。
     je16.S

@@ -37,7 +37,7 @@ int check(void *p1, void *p2, int val_size, int n, int df)
 {
     
     int i;
-    unsigned int a, b;
+    unsigned int a = 0, b = 0;
     unsigned char *p1_char = p1, *p2_char = p2;
     unsigned short *p1_short = p1, *p2_short = p2;
     unsigned int *p1_int = p1, *p2_int = p2;
