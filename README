@@ -6,7 +6,7 @@ ZBY 的 NEMU 测试用例
 
 关于 NEMU：
     NEMU 是复旦大学计算机系统基础课的大作业，目的是实现一个简单的教学用 x86 虚拟机。
-    复旦版是南大版的一个 fork，因为 NEMU 是南大的项目。
+    复旦版是南大版的一个分叉项目 (fork)，因为 NEMU 是南大的项目。
     复旦版：https://github.com/fdu-ics/programming-assignment
     南大版：https://github.com/nju-ics/ics2015
 
@@ -17,6 +17,7 @@ ZBY 的 NEMU 测试用例
 增强版的 trap.h：
     经过我修改的 trap.h 支持真机测试（见后），同时增加了 REALMACHINE_NOTSUITABLE 宏表明
     某一个测试样例不适合在真机上进行测试。
+    如果你不愿意使用该 trap.h，可以删掉含有 REALMACHINE_NOTSUITABLE 的文件。
     注意：该文件并不是我创建的，而是从 NEMU 项目中的文件修改而来，因此该文件并不适用根目录下
     的 LICENSE 文件中的许可证内容。我只能按照 GitHub 默认的“允许fork”原则发布。
 
