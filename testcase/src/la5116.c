@@ -412,7 +412,7 @@ int N, P;
 
 long long h[MOD];
 
-long long b[MAXV];
+long long b[MAXV]; // about 80 MB
 int bsz = 0;
 
 long long *v[MAXN + 1];
