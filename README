@@ -3,38 +3,21 @@ zby's testcase of NEMU
 
 ZBY 的 NEMU 测试用例
 
-
 关于 NEMU：
     NEMU 是复旦大学计算机系统基础课的大作业，目的是实现一个简单的教学用 x86 虚拟机。
     复旦版是南大版的一个分叉项目 (fork)，因为 NEMU 是南大的项目。
     复旦版：https://github.com/fdu-ics/programming-assignment
     南大版：https://github.com/nju-ics/ics2015
 
-测试用例：
+=======================================
+
+高级测试用例：
     testcase/src 目录下含有测试用例，其中有一部分是手写的，另一部分是用数据结构作业自动生成的。
     其中一些运行时间会比较长，但不会超过三分钟。
 
-增强版的 trap.h：
-    经过我修改的 trap.h 支持真机测试（见后），同时增加了 REALMACHINE_NOTSUITABLE 宏表明
-    某一个测试样例不适合在真机上进行测试。
-    如果你不愿意使用该 trap.h，可以删掉含有 REALMACHINE_NOTSUITABLE 的文件。
-    注意：该文件并不是我创建的，而是从 NEMU 项目中的文件修改而来，因此该文件并不适用根目录下
-    的 LICENSE 文件中的许可证内容。我只能按照 GitHub 默认的“允许fork”原则发布。
+使用方法：
+    将 testcase/src 目录下所有 .c 文件复制到你自己的 PA 对应目录下即可。
 
-内嵌汇编的参考资料：
-    有一些测试样例用到了内嵌汇编，用来测试指令级的行为。
-    参考资料：http://www.cnblogs.com/taek/archive/2012/02/05/2338838.html
-
-关于 .S (汇编代码) 类型的测试用例的用法：
-    在 testcase/Makefile.part 内添加如下内容：
-    testcase_BIN_SOBJS := $(filter-out obj/testcase/start, $(testcase_SOBJS:.o=))
-    $(testcase_BIN_SOBJS): % : %.o
-    	$(call make_command, $(LD), $(testcase_LDFLAGS), ld $@, $^)
-    	@objdump -d $@ > $@.txt
-    然后便可以像使用 mov.S 那样使用其他的测试用例了。如果想要在自动测试时也测试 .S 代码，
-    只要在 Makefile 中把所有 $(testcase_BIN) 后面追加上 $(testcase_BIN_SOBJS) 即可。
-    但是在 PA3 中，开启分页后，大部分 .S 测试用例会失败，可以把自动测试 .S 代码关掉
-    这是因为 .S 代码中用到了未映射的页面，不代表 NEMU 的实现有错误。
 
 强烈建议对测试用例开启 -O2 编译优化：
     由于 kernel, game 都是开启 -O2 优化来编译的，开启优化后，编译器产生的代码会有很大的不同，
@@ -51,17 +34,25 @@ ZBY 的 NEMU 测试用例
     bad.c
         单纯地就是一个 HIT_BAD_TRAP，测试它真的能不能 HIT BAD TRAP。
         记得在交作业之前把它删掉以免引起误会。
-    movzx.c movsx.c
+    movzx_high.c movsx_high.c
         测试 MOVZX, MOVSX 中单字节寄存器的译码是否正确。
     memcmp.c
         由于某种幸运的原因，SHR 指令不更新 ZF 也能通过测试，详情请看代码内的注释。
-    je16.S
-        16 位 je 跳转指令的测试，不能通过没有关系，因为根本没人会用 16 位条件转移指令。
-    jecxz.S
-        jecxz 相对于 jcxz 的前缀比较奇怪，是 address size 类型的前缀。
-        参考资料：http://www.mouseos.com/x64/doc3.html
     poj*.c la*.c
         用脚本自动生成的测试用例（见后）。来源是数据结构课作业。
+
+=======================================
+
+增强版的 trap.h：
+    经过我修改的 trap.h 支持真机测试（见后），同时增加了 REALMACHINE_NOTSUITABLE 宏表明
+    某一个测试样例不适合在真机上进行测试。
+    如果你不愿意使用该 trap.h，可以删掉含有 REALMACHINE_NOTSUITABLE 的文件。
+    注意：该文件并不是我创建的，而是从 NEMU 项目中的文件修改而来，因此该文件并不适用根目录下
+    的 LICENSE 文件中的许可证内容。我只能按照 GitHub 默认的“允许fork”原则发布。
+
+内嵌汇编的参考资料：
+    有一些测试样例用到了内嵌汇编，用来测试指令级的行为。
+    参考资料：http://www.cnblogs.com/taek/archive/2012/02/05/2338838.html
 
 在真机上运行测试用例：
     在真机上运行测试用例可以检测测试用例的正确性，用 realtest.sh 脚本可以实现这一点。
