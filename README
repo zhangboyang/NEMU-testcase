@@ -32,8 +32,8 @@ ZBY 的 NEMU 测试用例
     LLdiv.c
         用减法和移位实现的 long long 型除法，可以解决虚拟机中不能进行 long long 除法的问题。
         源项目：https://github.com/zhangboyang/LLdiv
-    bad.c
-        单纯地就是一个 HIT_BAD_TRAP，测试它真的能不能 HIT BAD TRAP。
+    bad.c bad2.c
+        始终 HIT BAD TRAP。用来测试 NEMU 能不能 HIT BAD TRAP。
         记得在交作业之前把它删掉以免引起误会。
     movzx_high.c movsx_high.c
         测试 MOVZX, MOVSX 中单字节寄存器的译码是否正确。
