@@ -42,6 +42,7 @@ void zby_assert(const char *file, const char *func, int line, int val)
 #include <string.h>
 void create_mmap(int base, int size)
 {
+    // you may want to set 'vm.mmap_min_addr' to some lower value (use sysctl)
     void *p = mmap((void *) base, size, PROT_READ | PROT_WRITE | PROT_EXEC, MAP_ANONYMOUS | MAP_PRIVATE, -1, 0);
     if ((int)p != base) {
         printf(c_bold c_red "MMAP %08x FAILED: p=%p errno=%s\n" c_normal, base, p, strerror(errno));
